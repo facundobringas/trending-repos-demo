@@ -7,4 +7,5 @@ data class ApiResult<T>(@SerializedName("total_count") val totalCount: Int,
                         @SerializedName("items") val items: List<T> )
 
 data class Repo(@SerializedName("name") val name: String,
-                @SerializedName("full_name")val fullName: String)
+                @SerializedName("full_name") val fullName: String,
+                val description: String)

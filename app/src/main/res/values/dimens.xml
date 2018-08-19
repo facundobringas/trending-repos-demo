@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="text_margin">16dp</dimen>
+    <dimen name="repo_item_horizontal_padding">10dp</dimen>
+    <dimen name="repo_item_vertical_padding">8dp</dimen>
+    <dimen name="repo_item_title_text_size">16sp</dimen>
+    <dimen name="repo_item_desc_text_size">12sp</dimen>
+    <dimen name="repo_item_title_vertical_padding">5dp</dimen>
+    <dimen name="repo_item_height">100dp</dimen>
 </resources>
