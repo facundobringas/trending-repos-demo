@@ -47,7 +47,10 @@ class RepoListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loadRepoList()
+    }
 
+    fun loadRepoList() {
         val call = AppRetrofit(activity!!).searchService.search()
         call.enqueue(object: Callback<ApiResult<Repo>?> {
             override fun onResponse(call: Call<ApiResult<Repo>?>?,
@@ -70,7 +73,7 @@ class RepoListFragment : Fragment() {
     private fun loadRepos(repos : List<Repo>){
         repoAdapter.mRepos = repos
         repoAdapter.notifyDataSetChanged()
-        listener?.onRepoListLoaded(repos)
+        listener?.onRepoListLoad()
     }
 
     override fun onAttach(context: Context) {
@@ -88,10 +91,9 @@ class RepoListFragment : Fragment() {
     }
 
     interface OnRepoListListener {
-
-        fun onRepoListLoaded(repos: List<Repo>)
+        fun onRepoListLoad()
         fun onRepoListError(uri: Uri)
-        fun onRepoClick(repo: Repo)
+        fun onRepoListItemClick(repo: Repo)
     }
 
     companion object {

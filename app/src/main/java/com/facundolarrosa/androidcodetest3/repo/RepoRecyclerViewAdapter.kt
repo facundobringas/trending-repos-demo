@@ -23,7 +23,7 @@ class RepoRecyclerViewAdapter(
     init {
         mOnClickListener = View.OnClickListener { v ->
             val repo = v.tag as Repo
-            mListener?.onRepoClick(repo)
+            mListener?.onRepoListItemClick(repo)
         }
     }
 
@@ -36,7 +36,9 @@ class RepoRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val repo = mRepos[position]
         holder.mName.text = repo.name
-        holder.mDescription.text = repo.description
+        repo.description?.let {
+            holder.mDescription.text = it
+        }
 
         with(holder.mView) {
             tag = repo
