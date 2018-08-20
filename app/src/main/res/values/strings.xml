@@ -2,5 +2,19 @@
     <string name="app_name">Android Code Test 3</string>
     <string name="main_activity_title">Github Trending Repos</string>
     <string name="default_no_description">This item has no description</string>
+    <string name="refresh">Refresh</string>
+
+    <!--Error messages-->
+    <string name="standard_error_message">Something unexpected happened while trying to fetch data from our server.</string>
+    <string name="socket_timeout">There seems to be a problem with the network. Please try again in a few minutes.</string>
+    <string name="no_network_available">Oops! Your device has no network available. Please check if device is connected and try again.</string>
+    <string name="unknown_host">We could not connect to server. Please check your network connection or try again in a few minutes</string>
+    <string name="our_bad">Sorry, our Bad! Please contact support and tell them </string>
+    <string name="empty_response">%s we got an empty response from the server.</string>
+    <string name="unprocessable_entity">%s that server says: %s.</string>
+    <string name="conversion_error">%s you got a %s.</string>
+    <string name="http_error">%s that server responded with a status code %d</string>
+
+
 
 </resources>

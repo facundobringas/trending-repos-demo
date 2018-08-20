@@ -9,23 +9,11 @@ import com.facundolarrosa.androidcodetest3.R
 import com.facundolarrosa.androidcodetest3.model.Repo
 import kotlinx.android.synthetic.main.repo_item.view.*
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- */
+
 class RepoRecyclerViewAdapter(
         var mRepos: List<Repo>,
-        private val mListener: RepoListFragment.OnRepoListListener?)
+        private val mOnClickListener: View.OnClickListener)
     : RecyclerView.Adapter<RepoRecyclerViewAdapter.ViewHolder>() {
-
-    private val mOnClickListener: View.OnClickListener
-
-    init {
-        mOnClickListener = View.OnClickListener { v ->
-            val repo = v.tag as Repo
-            mListener?.onRepoListItemClick(repo)
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -36,9 +24,7 @@ class RepoRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val repo = mRepos[position]
         holder.mName.text = repo.name
-        repo.description?.let {
-            holder.mDescription.text = it
-        }
+        holder.mDescription.text = repo.description
 
         with(holder.mView) {
             tag = repo
