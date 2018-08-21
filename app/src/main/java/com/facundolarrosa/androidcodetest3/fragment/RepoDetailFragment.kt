@@ -1,4 +1,4 @@
-package com.facundolarrosa.androidcodetest3.repo
+package com.facundolarrosa.androidcodetest3.fragment
 
 
 import android.os.Bundle
@@ -19,12 +19,12 @@ private const val ARG_REPO = "repo"
  *
  */
 class RepoDetailFragment : Fragment() {
-    private var repo: Repo? = null
+    private var mRepo: Repo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            repo = it.getParcelable(ARG_REPO)
+            mRepo = it.getParcelable(ARG_REPO)
         }
     }
 
@@ -35,8 +35,8 @@ class RepoDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = repo?.name
-        tv_detail.text = repo?.description
+        activity?.title = mRepo?.name
+        tv_detail.text = mRepo?.description
     }
 
 

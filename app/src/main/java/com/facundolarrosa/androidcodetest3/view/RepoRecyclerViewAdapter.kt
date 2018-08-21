@@ -1,4 +1,4 @@
-package com.facundolarrosa.androidcodetest3.repo
+package com.facundolarrosa.androidcodetest3.view
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater

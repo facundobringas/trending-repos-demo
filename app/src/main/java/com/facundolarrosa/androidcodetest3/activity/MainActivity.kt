@@ -1,38 +1,34 @@
 package com.facundolarrosa.androidcodetest3.activity
 
 import android.app.FragmentManager
+import android.content.BroadcastReceiver
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
+import android.content.Intent
+import android.content.IntentFilter
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.facundolarrosa.androidcodetest3.ErrorFragment
-import com.facundolarrosa.androidcodetest3.NoResultsFragment
+import com.facundolarrosa.androidcodetest3.fragment.ErrorFragment
+import com.facundolarrosa.androidcodetest3.fragment.NoResultsFragment
 import com.facundolarrosa.androidcodetest3.R
-import com.facundolarrosa.androidcodetest3.model.ApiResult
-import com.facundolarrosa.androidcodetest3.repo.RepoDetailFragment
+import com.facundolarrosa.androidcodetest3.fragment.RepoDetailFragment
 import com.facundolarrosa.androidcodetest3.model.Repo
-import com.facundolarrosa.androidcodetest3.repo.RepoRecyclerViewAdapter
-import com.facundolarrosa.androidcodetest3.rest.AppRetrofit
+import com.facundolarrosa.androidcodetest3.intentservice.HtttpIntentService
+import com.facundolarrosa.androidcodetest3.view.RepoRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.repo_list.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import org.json.JSONObject
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
-private const val UNPROCESSABLE_ENTITY = 422
-private const val ERROR = "errorFragment"
+private const val ERROR_STATE = "ERROR_STATE"
 
 class MainActivity : AppCompatActivity(){
 
-    private lateinit var repoAdapter: RepoRecyclerViewAdapter
+    private lateinit var mRepoAdapter: RepoRecyclerViewAdapter
+    private lateinit var mBroadcastReceiver: BroadcastReceiver
+    private var mCachedRepos: List<Repo>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,15 +42,25 @@ class MainActivity : AppCompatActivity(){
             onRepoItemClick(repo)
         }
 
-        repoAdapter = RepoRecyclerViewAdapter(ArrayList(), onClickListener)
+        mRepoAdapter = RepoRecyclerViewAdapter(ArrayList(), onClickListener)
 
-        if (rv_repo_list is RecyclerView) {
-            with(rv_repo_list) {
-                adapter = repoAdapter
+        mBroadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(contxt: Context?, intent: Intent?) {
+
+                when (intent?.action) {
+                    HtttpIntentService.SEARCH_REPOS_SUCCESS -> onSearchReposSuccess(intent?.getParcelableArrayListExtra(HtttpIntentService.SEARCH_REPOS_RESULT)!! )
+                    HtttpIntentService.SEARCH_REPOS_ERROR -> onSearchReposError(intent?.getStringExtra(HtttpIntentService.SEARCH_REPOS_ERROR_MESSAGE))
+                }
             }
         }
 
-        fetch()
+        if (rv_repo_list is RecyclerView) {
+            with(rv_repo_list) {
+                adapter = mRepoAdapter
+            }
+        }
+
+        searchRepos()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -65,91 +71,75 @@ class MainActivity : AppCompatActivity(){
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
         when (item?.itemId) {
-            R.id.action_refresh -> fetch()
+            R.id.action_refresh -> searchRepos()
             android.R.id.home -> onBackPressed()
         }
 
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        val intentFilter =  IntentFilter()
+        intentFilter.addAction(HtttpIntentService.SEARCH_REPOS_SUCCESS)
+        intentFilter.addAction(HtttpIntentService.SEARCH_REPOS_ERROR)
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,intentFilter)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver)
+    }
+
     override fun onBackPressed() {
-        if(supportFragmentManager.backStackEntryCount > 0 ){
-            if(supportFragmentManager.backStackEntryCount == 1){
-                if(supportFragmentManager.getBackStackEntryAt(0).name == ERROR){
-                    super.onBackPressed()
-                }else {
-                    supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                    title = getString(R.string.main_activity_title)
+        if(supportFragmentManager.backStackEntryCount > 0){
+            if(supportFragmentManager.getBackStackEntryAt(0).name == ERROR_STATE) {
+                if( mCachedRepos == null ){
+                    finish()
                 }
+            }else {
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                title = getString(R.string.main_activity_title)
+                invalidateOptionsMenu()
             }
         }
         super.onBackPressed()
     }
 
-    fun fetch() {
-        if(!isNetworkAvailable()){
-            onRepoListError(getString(R.string.no_network_available))
-            return
-        }
-
-        supportFragmentManager.popBackStack(ERROR, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    private fun searchRepos(){
+        HtttpIntentService.startSearchRepos(this);
         main_progress_bar.visibility = View.VISIBLE
-
-        val call = AppRetrofit(this).searchService.search()
-        call.enqueue(object: Callback<ApiResult<Repo>?> {
-            override fun onResponse(call: Call<ApiResult<Repo>?>?,
-                                    response: Response<ApiResult<Repo>?>?) {
-
-                if(response?.isSuccessful!!){
-                    response?.body()?.let {
-                        val repos: List<Repo> = it.items
-                        loadRepos(repos)
-                    }?: run {
-                        onRepoListError(this@MainActivity.getString(R.string.empty_response, this@MainActivity.getString(R.string.our_bad )))
-                    }
-                }else if (response?.code() == UNPROCESSABLE_ENTITY){
-                    val jObjError = JSONObject(response?.errorBody()?.string())
-                    onRepoListError(this@MainActivity.getString(R.string.unprocessable_entity, this@MainActivity.getString(R.string.our_bad ), jObjError.getString("message")))
-                }else{
-                    onRepoListError(this@MainActivity.getString(R.string.http_error, this@MainActivity.getString(R.string.our_bad ), response?.code()))
-                }
-
-            }
-
-            override fun onFailure(call: Call<ApiResult<Repo>?>?,
-                                   t: Throwable?) {
-                when(t) {
-                    is SocketTimeoutException -> onRepoListError(this@MainActivity.getString(R.string.socket_timeout))
-                    is UnknownHostException -> onRepoListError(this@MainActivity.getString(R.string.unknown_host))
-                    else -> onRepoListError(this@MainActivity.getString(R.string.conversion_error, this@MainActivity.getString(R.string.our_bad ), t?.message))
-                }
-            }
-        })
     }
 
-    private fun loadRepos(repos : List<Repo>){
+    private fun onSearchReposSuccess(repos : ArrayList<Repo>){
+        // Out from error state if present
+        supportFragmentManager.popBackStack(ERROR_STATE, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
         if(repos.size > 0) {
-            repoAdapter.mRepos = repos
-            repoAdapter.notifyDataSetChanged()
+            mRepoAdapter.mRepos = repos
+            mRepoAdapter.notifyDataSetChanged()
         }else{
             val fragment = NoResultsFragment.newInstance()
             supportFragmentManager
                     .beginTransaction()
-                    .addToBackStack(ERROR)
+                    .addToBackStack(ERROR_STATE)
                     .add(R.id.main_container, fragment)
                     .commit()
         }
+        mCachedRepos = repos
         main_progress_bar.visibility = View.GONE
     }
 
-    fun onRepoListError(error: String?) {
-        main_progress_bar.visibility = View.GONE
+    fun onSearchReposError(error: String?) {
         val fragment = ErrorFragment.newInstance(error)
         supportFragmentManager
                 .beginTransaction()
-                .addToBackStack(ERROR)
-                .add(R.id.main_container, fragment)
+                .addToBackStack(ERROR_STATE)
+                .replace(R.id.main_container, fragment)
                 .commit()
+
+        main_progress_bar.visibility = View.GONE
     }
 
     fun onRepoItemClick(repo: Repo) {
@@ -160,12 +150,8 @@ class MainActivity : AppCompatActivity(){
                 .addToBackStack(null)
                 .commit()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
 
-    fun isNetworkAvailable(): Boolean {
-        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        return activeNetwork?.isConnectedOrConnecting == true
+        toolbar.menu.removeItem(R.id.action_refresh)
     }
 
 }

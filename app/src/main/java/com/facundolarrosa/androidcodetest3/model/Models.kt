@@ -11,11 +11,14 @@ data class ApiResult<T>(val totalCount: Int,
 data class Repo(val name: String,
                 val fullName: String,
                 val owner: Owner,
-                val description: String,
+                val description: String?,
                 val language: String,
                 val stargazersCount: Int,
                 val watchers: Int,
-                val forks: Int) : Parcelable {
+                val forks: Int,
+                val homepage: String?,
+                val cloneUrl: String,
+                val htmlUrl: String) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
@@ -24,7 +27,10 @@ data class Repo(val name: String,
             parcel.readString(),
             parcel.readInt(),
             parcel.readInt(),
-            parcel.readInt()) {
+            parcel.readInt(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString()) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -36,6 +42,9 @@ data class Repo(val name: String,
         parcel.writeInt(stargazersCount)
         parcel.writeInt(watchers)
         parcel.writeInt(forks)
+        parcel.writeString(homepage)
+        parcel.writeString(cloneUrl)
+        parcel.writeString(htmlUrl)
     }
 
     override fun describeContents(): Int {
