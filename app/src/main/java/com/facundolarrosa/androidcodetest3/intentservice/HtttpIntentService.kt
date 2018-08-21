@@ -10,6 +10,7 @@ import com.facundolarrosa.androidcodetest3.R
 import com.facundolarrosa.androidcodetest3.model.ApiResult
 import com.facundolarrosa.androidcodetest3.model.Repo
 import com.facundolarrosa.androidcodetest3.retrofit.GithubApiService
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -91,11 +92,43 @@ class HtttpIntentService : IntentService("HtttpIntentService") {
         LocalBroadcastManager.getInstance(this).sendBroadcast(errorBroadCastIntent)
     }
 
-    private fun handleGetReadMe(param1: String, param2: String) {
-        TODO("Handle action Baz")
+    private fun handleGetReadMe(owner: String, name: String) {
+        if(!isNetworkAvailable()){
+            return
+        }
+
+        val call = GithubApiService.instance.getReadMe(owner, name)
+        call.enqueue(object: Callback<ResponseBody?> {
+            override fun onResponse(call: Call<ResponseBody?>?,
+                                    response: Response<ResponseBody?>?) {
+
+                if(response?.isSuccessful!!){
+                    response?.body()?.let {
+                        val readMe: String? = response?.body()?.string()
+                        onGetReadMeSuccess(readMe!!)
+                    }
+                }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody?>?,
+                                   t: Throwable?) {
+                when(t) {
+                    is SocketTimeoutException -> onSeacrhReposError(this@HtttpIntentService.getString(R.string.socket_timeout))
+                    is UnknownHostException -> onSeacrhReposError(this@HtttpIntentService.getString(R.string.unknown_host))
+                    else -> onSeacrhReposError(this@HtttpIntentService.getString(R.string.conversion_error, this@HtttpIntentService.getString(R.string.our_bad ), t?.message))
+                }
+            }
+        })
     }
 
-    fun isNetworkAvailable(): Boolean {
+    private fun onGetReadMeSuccess(readMe: String) {
+        val successBroadCastIntent = Intent(GET_README_SUCCESS)
+        successBroadCastIntent.putExtra(GET_README_RESULT, readMe)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(successBroadCastIntent)
+    }
+
+    private fun isNetworkAvailable(): Boolean {
         val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
         return activeNetwork?.isConnectedOrConnecting == true
@@ -125,5 +158,8 @@ class HtttpIntentService : IntentService("HtttpIntentService") {
         @JvmStatic val SEARCH_REPOS_SUCCESS = "SEARCH_REPOS_SUCCES"
         @JvmStatic val SEARCH_REPOS_ERROR = "SEARCH_REPOS_ERROR"
         @JvmStatic val SEARCH_REPOS_ERROR_MESSAGE = "SEARCH_REPOS_ERROR_MESSAGE"
+
+        @JvmStatic val GET_README_RESULT = "GET_README_RESULT"
+        @JvmStatic val GET_README_SUCCESS = "GET_README_SUCCES"
     }
 }
