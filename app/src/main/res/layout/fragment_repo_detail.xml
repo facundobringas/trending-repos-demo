@@ -1,22 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:padding="@dimen/repo_item_horizontal_padding"
+    android:orientation="vertical"
     tools:context=".fragment.RepoDetailFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:textSize="@dimen/repo_detail_text_size"
+        android:textStyle="bold"
+        android:paddingHorizontal="@dimen/repo_item_horizontal_padding"
+        android:layout_marginVertical="@dimen/repo_item_title_vertical_padding">
+
+        <TextView
+            android:id="@+id/tv_owner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/back_slash"
+            android:textColor="@color/colorAccent"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tv_detail"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/repo_item_vertical_padding"
         android:text="@string/default_no_description"/>
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="@dimen/error_image_width"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        android:layout_gravity="right">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/tv_language"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_stars"
+                android:background="@android:color/transparent"
+                android:layout_gravity="right" />
+            <TextView
+                android:id="@+id/tv_stars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginLeft="@dimen/repo_item_horizontal_padding"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_forks"
+                android:background="@android:color/transparent"
+                android:layout_gravity="right"/>
+            <TextView
+                android:id="@+id/tv_forks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginLeft="@dimen/repo_item_horizontal_padding"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_watchers"
+                android:background="@android:color/transparent"
+                android:layout_gravity="right"/>
+            <TextView
+                android:id="@+id/tv_watchers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginLeft="@dimen/repo_item_horizontal_padding"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_readme_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/readme"
+        android:layout_marginVertical="@dimen/repo_item_vertical_padding"/>
+
+    <TextView
+        android:id="@+id/tv_readme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_readme"
+        android:padding="@dimen/pd_readme"/>
+
 
  <!--   <us.feras.mdv.MarkdownView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/md_view" />-->
 
-</RelativeLayout>
+</LinearLayout>

@@ -18,7 +18,7 @@ import com.facundolarrosa.androidcodetest3.R
 import com.facundolarrosa.androidcodetest3.fragment.RepoDetailFragment
 import com.facundolarrosa.androidcodetest3.model.Repo
 import com.facundolarrosa.androidcodetest3.intentservice.HtttpIntentService
-import com.facundolarrosa.androidcodetest3.view.RepoRecyclerViewAdapter
+import com.facundolarrosa.androidcodetest3.adapter.RepoRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.repo_list.*
 

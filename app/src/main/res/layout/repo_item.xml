@@ -1,26 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/repo_item_height"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingVertical="@dimen/repo_item_vertical_padding"
     android:background="@drawable/repo_item_background" >
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
+    <LinearLayout
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:textSize="@dimen/repo_item_title_text_size"
         android:textStyle="bold"
         android:paddingHorizontal="@dimen/repo_item_horizontal_padding"
-        android:layout_marginVertical="@dimen/repo_item_title_vertical_padding"/>
+        android:layout_marginVertical="@dimen/repo_item_title_vertical_padding">
+
+        <TextView
+            android:id="@+id/tv_item_owner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/back_slash"
+            android:textColor="@color/colorAccent"/>
+
+        <TextView
+            android:id="@+id/tv_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.Compat.Notification.Info"
         android:paddingHorizontal="@dimen/repo_item_horizontal_padding"
-        android:textSize="@dimen/repo_item_desc_text_size" />
+        android:paddingBottom="@dimen/repo_item_vertical_padding"
+        android:textSize="@dimen/repo_item_desc_text_size"
+        android:scrollHorizontally="true"
+        android:ellipsize="end"
+        android:maxLines="1"/>
+
 </LinearLayout>

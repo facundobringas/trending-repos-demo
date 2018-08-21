@@ -106,20 +106,25 @@ class HtttpIntentService : IntentService("HtttpIntentService") {
                     response?.body()?.let {
                         val readMe: String? = response?.body()?.string()
                         onGetReadMeSuccess(readMe!!)
+                    }?: run {
+                        onGetReadmeError()
                     }
+                }else{
+                    onGetReadmeError()
                 }
 
             }
 
             override fun onFailure(call: Call<ResponseBody?>?,
                                    t: Throwable?) {
-                when(t) {
-                    is SocketTimeoutException -> onSeacrhReposError(this@HtttpIntentService.getString(R.string.socket_timeout))
-                    is UnknownHostException -> onSeacrhReposError(this@HtttpIntentService.getString(R.string.unknown_host))
-                    else -> onSeacrhReposError(this@HtttpIntentService.getString(R.string.conversion_error, this@HtttpIntentService.getString(R.string.our_bad ), t?.message))
-                }
+                onGetReadmeError()
             }
         })
+    }
+
+    private fun onGetReadmeError() {
+        val successBroadCastIntent = Intent(GET_README_ERROR)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(successBroadCastIntent)
     }
 
     private fun onGetReadMeSuccess(readMe: String) {
@@ -161,5 +166,6 @@ class HtttpIntentService : IntentService("HtttpIntentService") {
 
         @JvmStatic val GET_README_RESULT = "GET_README_RESULT"
         @JvmStatic val GET_README_SUCCESS = "GET_README_SUCCES"
+        @JvmStatic val GET_README_ERROR = "GET_README_ERROR"
     }
 }

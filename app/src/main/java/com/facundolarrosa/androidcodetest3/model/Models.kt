@@ -2,6 +2,7 @@ package com.facundolarrosa.androidcodetest3.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 
 
 data class ApiResult<T>(val totalCount: Int,
@@ -13,7 +14,7 @@ data class Repo(val name: String,
                 val owner: Owner,
                 val description: String?,
                 val language: String,
-                val stargazersCount: Int,
+                @SerializedName("stargazers_count")val stargazersCount: Int,
                 val watchers: Int,
                 val forks: Int,
                 val homepage: String?,

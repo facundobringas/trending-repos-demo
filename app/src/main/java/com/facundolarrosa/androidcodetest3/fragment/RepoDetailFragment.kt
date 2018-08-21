@@ -43,6 +43,7 @@ class RepoDetailFragment : Fragment() {
 
                 when (intent?.action) {
                     HtttpIntentService.GET_README_SUCCESS -> onGetReadMeSuccess(intent.getStringExtra(HtttpIntentService.GET_README_RESULT)!!)
+                    HtttpIntentService.GET_README_ERROR -> onGetReadMeError()
                 }
             }
         }
@@ -50,10 +51,17 @@ class RepoDetailFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_repo_detail, container, false)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = mRepo?.name
+        activity?.title = getString(R.string.repo_details)
+        tv_name.text = mRepo?.name
         tv_detail.text = mRepo?.description
+        tv_owner.text = mRepo?.owner?.login
+        tv_language.text = mRepo?.language
+        tv_stars.text = mRepo?.stargazersCount.toString()
+        tv_forks.text = mRepo?.forks.toString()
+        tv_watchers.text = mRepo?.watchers.toString()
 
         getReadMe()
     }
@@ -71,15 +79,19 @@ class RepoDetailFragment : Fragment() {
         LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(mBroadcastReceiver)
     }
 
-
-    fun getReadMe(){
+    private fun getReadMe(){
         HtttpIntentService.startGetReadMe(activity!!, mRepo?.owner?.login!!, mRepo?.name!!)
     }
 
-    fun onGetReadMeSuccess(readme: String){
-        Markwon.setMarkdown(tv_detail, readme);
+    private fun onGetReadMeSuccess(readme: String){
+        Markwon.setMarkdown(tv_readme, readme);
         //md_view.loadMarkdown(readme)
     }
+
+    private fun onGetReadMeError() {
+        tv_readme.text = getString(R.string.readme_error)
+    }
+
 
     companion object {
         /**

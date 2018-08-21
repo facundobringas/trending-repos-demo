@@ -1,4 +1,4 @@
-package com.facundolarrosa.androidcodetest3.view
+package com.facundolarrosa.androidcodetest3.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -23,6 +23,7 @@ class RepoRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val repo = mRepos[position]
+        holder.mOwner.text = repo.owner.login
         holder.mName.text = repo.name
         holder.mDescription.text = repo.description
 
@@ -35,7 +36,8 @@ class RepoRecyclerViewAdapter(
     override fun getItemCount(): Int = mRepos.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mName: TextView = mView.name
+        val mOwner: TextView = mView.tv_item_owner
+        val mName: TextView = mView.tv_item_name
         val mDescription: TextView = mView.description
 
         override fun toString(): String {

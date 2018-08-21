@@ -17,6 +17,11 @@
 
     <string name="standard_no_results_message">Github returned no repos...</string>
     <string name="no_results">Tell developers to take it easy on search params</string>
+    <string name="back_slash">/</string>
+    <string name="readme_error">Unable to retrieve README.md file</string>
+    <string name="repo_details">Repo Details</string>
+    <string name="readme">README.md</string>
+    <string name="empty_description">(No description)</string>
 
 
 </resources>

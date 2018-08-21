@@ -8,4 +8,6 @@
     <dimen name="repo_item_height">100dp</dimen>
     <dimen name="error_image_width">250dp</dimen>
     <dimen name="error_image_height">120dp</dimen>
+    <dimen name="repo_detail_text_size">18sp</dimen>
+    <dimen name="pd_readme">15dp</dimen>
 </resources>
