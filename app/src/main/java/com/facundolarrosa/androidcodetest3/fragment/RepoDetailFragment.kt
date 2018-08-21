@@ -15,6 +15,7 @@ import com.facundolarrosa.androidcodetest3.R
 import com.facundolarrosa.androidcodetest3.intentservice.HtttpIntentService
 import com.facundolarrosa.androidcodetest3.model.Repo
 import kotlinx.android.synthetic.main.fragment_repo_detail.*
+import ru.noties.markwon.Markwon
 
 private const val ARG_REPO = "repo"
 
@@ -41,7 +42,7 @@ class RepoDetailFragment : Fragment() {
             override fun onReceive(contxt: Context?, intent: Intent?) {
 
                 when (intent?.action) {
-                    HtttpIntentService.GET_README_SUCCESS -> onGetReadMeSuccess(intent?.getStringExtra(HtttpIntentService.GET_README_RESULT)!!)
+                    HtttpIntentService.GET_README_SUCCESS -> onGetReadMeSuccess(intent.getStringExtra(HtttpIntentService.GET_README_RESULT)!!)
                 }
             }
         }
@@ -76,7 +77,8 @@ class RepoDetailFragment : Fragment() {
     }
 
     fun onGetReadMeSuccess(readme: String){
-        md_view.loadMarkdown(readme)
+        Markwon.setMarkdown(tv_detail, readme);
+        //md_view.loadMarkdown(readme)
     }
 
     companion object {

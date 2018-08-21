@@ -14,9 +14,9 @@
         android:layout_height="match_parent"
         android:text="@string/default_no_description"/>
 
-    <us.feras.mdv.MarkdownView
+ <!--   <us.feras.mdv.MarkdownView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/md_view" />
+        android:id="@+id/md_view" />-->
 
 </RelativeLayout>
