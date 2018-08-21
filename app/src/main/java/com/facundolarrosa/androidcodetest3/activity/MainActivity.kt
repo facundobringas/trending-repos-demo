@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.facundolarrosa.androidcodetest3.ErrorFragment
+import com.facundolarrosa.androidcodetest3.NoResultsFragment
 import com.facundolarrosa.androidcodetest3.R
 import com.facundolarrosa.androidcodetest3.model.ApiResult
 import com.facundolarrosa.androidcodetest3.repo.RepoDetailFragment
@@ -29,7 +30,7 @@ import java.net.UnknownHostException
 private const val UNPROCESSABLE_ENTITY = 422
 private const val ERROR = "errorFragment"
 
-class MainActivity : AppCompatActivity(), ErrorFragment.OnReloadListener{
+class MainActivity : AppCompatActivity(){
 
     private lateinit var repoAdapter: RepoRecyclerViewAdapter
 
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity(), ErrorFragment.OnReloadListener{
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
-        toolbar.title = getString(R.string.main_activity_title)
+        title = getString(R.string.main_activity_title)
 
         val onClickListener: View.OnClickListener = View.OnClickListener { v ->
             val repo = v.tag as Repo
@@ -74,8 +75,12 @@ class MainActivity : AppCompatActivity(), ErrorFragment.OnReloadListener{
     override fun onBackPressed() {
         if(supportFragmentManager.backStackEntryCount > 0 ){
             if(supportFragmentManager.backStackEntryCount == 1){
-                supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                title = getString(R.string.main_activity_title)
+                if(supportFragmentManager.getBackStackEntryAt(0).name == ERROR){
+                    super.onBackPressed()
+                }else {
+                    supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                    title = getString(R.string.main_activity_title)
+                }
             }
         }
         super.onBackPressed()
@@ -116,15 +121,24 @@ class MainActivity : AppCompatActivity(), ErrorFragment.OnReloadListener{
                 when(t) {
                     is SocketTimeoutException -> onRepoListError(this@MainActivity.getString(R.string.socket_timeout))
                     is UnknownHostException -> onRepoListError(this@MainActivity.getString(R.string.unknown_host))
-                    else -> onRepoListError(this@MainActivity.getString(R.string.conversion_error, t?.message))
+                    else -> onRepoListError(this@MainActivity.getString(R.string.conversion_error, this@MainActivity.getString(R.string.our_bad ), t?.message))
                 }
             }
         })
     }
 
     private fun loadRepos(repos : List<Repo>){
-        repoAdapter.mRepos = repos
-        repoAdapter.notifyDataSetChanged()
+        if(repos.size > 0) {
+            repoAdapter.mRepos = repos
+            repoAdapter.notifyDataSetChanged()
+        }else{
+            val fragment = NoResultsFragment.newInstance()
+            supportFragmentManager
+                    .beginTransaction()
+                    .addToBackStack(ERROR)
+                    .add(R.id.main_container, fragment)
+                    .commit()
+        }
         main_progress_bar.visibility = View.GONE
     }
 
@@ -146,10 +160,6 @@ class MainActivity : AppCompatActivity(), ErrorFragment.OnReloadListener{
                 .addToBackStack(null)
                 .commit()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    override fun onReloadListener() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     fun isNetworkAvailable(): Boolean {
