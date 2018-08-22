@@ -76,6 +76,7 @@ class RepoDetailFragment : Fragment() {
 
         val intentFilter =  IntentFilter()
         intentFilter.addAction(HttpIntentService.GET_README_SUCCESS)
+        intentFilter.addAction(HttpIntentService.GET_README_ERROR)
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(mBroadcastReceiver,intentFilter)
     }
 
@@ -103,11 +104,13 @@ class RepoDetailFragment : Fragment() {
     }
 
     private fun onGetReadMeSuccess(readme: String){
+        tv_readme_error.visibility = View.GONE
         md_view.setMarkDownText(readme)
         mListener?.onFragmentFinishedLoading()
     }
 
     private fun onGetReadMeError() {
+        tv_readme_error.visibility = View.VISIBLE
         mListener?.onFragmentFinishedLoading()
     }
 

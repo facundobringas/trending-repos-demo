@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Android Code Test 3</string>
+    <string name="app_name">Facundo\'s Test</string>
     <string name="main_activity_title">Trending</string>
     <string name="default_no_description">This item has no description</string>
     <string name="refresh">Refresh</string>

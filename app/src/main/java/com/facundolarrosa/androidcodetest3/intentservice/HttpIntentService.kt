@@ -94,6 +94,7 @@ class HttpIntentService : IntentService("HttpIntentService") {
 
     private fun handleGetReadMe(owner: String, name: String) {
         if(!isNetworkAvailable()){
+            onGetReadmeError()
             return
         }
 
