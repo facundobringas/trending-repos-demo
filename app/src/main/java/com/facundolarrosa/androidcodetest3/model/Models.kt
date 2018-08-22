@@ -14,7 +14,7 @@ data class Repo(val name: String,
                 val owner: Owner,
                 val description: String?,
                 val language: String,
-                @SerializedName("stargazers_count")val stargazersCount: Int,
+                @SerializedName("stargazers_count") val stargazersCount: Int,
                 val watchers: Int,
                 val forks: Int,
                 val homepage: String?,
@@ -64,7 +64,7 @@ data class Repo(val name: String,
 }
 
 data class Owner(val login: String,
-                 val avatar: String ) : Parcelable {
+                 @SerializedName("avatar_url") val avatarUrl: String ) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString()) {
@@ -72,7 +72,7 @@ data class Owner(val login: String,
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(login)
-        parcel.writeString(avatar)
+        parcel.writeString(avatarUrl)
     }
 
     override fun describeContents(): Int {

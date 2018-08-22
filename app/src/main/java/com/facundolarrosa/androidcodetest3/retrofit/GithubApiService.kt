@@ -13,7 +13,7 @@ import retrofit2.http.Query
 interface GithubApiService {
 
     @GET("search/repositories")
-    fun searchRepos(@Query("q") q: String = "created:>2018-08-01 topic:android language:java language:kotlin stars:>=1 forks:>=1",
+    fun searchRepos(@Query("q") q: String = "created:>2012-06-01 language:kotlin stars:>=1000",
                     @Query("sort") sort: String = "stars",
                     @Query("order") order: String = "desc"): Call<ApiResult<Repo>>
 

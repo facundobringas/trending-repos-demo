@@ -17,25 +17,24 @@ import com.facundolarrosa.androidcodetest3.fragment.NoResultsFragment
 import com.facundolarrosa.androidcodetest3.R
 import com.facundolarrosa.androidcodetest3.fragment.RepoDetailFragment
 import com.facundolarrosa.androidcodetest3.model.Repo
-import com.facundolarrosa.androidcodetest3.intentservice.HtttpIntentService
+import com.facundolarrosa.androidcodetest3.intentservice.HttpIntentService
 import com.facundolarrosa.androidcodetest3.adapter.RepoRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.repo_list.*
 
 private const val ERROR_STATE = "ERROR_STATE"
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(), RepoDetailFragment.OnFragmentFinishedLoadingListener {
 
     private lateinit var mRepoAdapter: RepoRecyclerViewAdapter
     private lateinit var mBroadcastReceiver: BroadcastReceiver
-    private var mCachedRepos: List<Repo>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setSupportActionBar(toolbar)
-        title = getString(R.string.main_activity_title)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_dark)
 
         val onClickListener: View.OnClickListener = View.OnClickListener { v ->
             val repo = v.tag as Repo
@@ -48,8 +47,8 @@ class MainActivity : AppCompatActivity(){
             override fun onReceive(contxt: Context?, intent: Intent?) {
 
                 when (intent?.action) {
-                    HtttpIntentService.SEARCH_REPOS_SUCCESS -> onSearchReposSuccess(intent?.getParcelableArrayListExtra(HtttpIntentService.SEARCH_REPOS_RESULT)!! )
-                    HtttpIntentService.SEARCH_REPOS_ERROR -> onSearchReposError(intent?.getStringExtra(HtttpIntentService.SEARCH_REPOS_ERROR_MESSAGE))
+                    HttpIntentService.SEARCH_REPOS_SUCCESS -> onSearchReposSuccess(intent.getParcelableArrayListExtra(HttpIntentService.SEARCH_REPOS_RESULT)!! )
+                    HttpIntentService.SEARCH_REPOS_ERROR -> onSearchReposError(intent.getStringExtra(HttpIntentService.SEARCH_REPOS_ERROR_MESSAGE))
                 }
             }
         }
@@ -82,8 +81,8 @@ class MainActivity : AppCompatActivity(){
         super.onStart()
 
         val intentFilter =  IntentFilter()
-        intentFilter.addAction(HtttpIntentService.SEARCH_REPOS_SUCCESS)
-        intentFilter.addAction(HtttpIntentService.SEARCH_REPOS_ERROR)
+        intentFilter.addAction(HttpIntentService.SEARCH_REPOS_SUCCESS)
+        intentFilter.addAction(HttpIntentService.SEARCH_REPOS_ERROR)
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,intentFilter)
     }
 
@@ -93,22 +92,28 @@ class MainActivity : AppCompatActivity(){
     }
 
     override fun onBackPressed() {
+        var executeOnBackPressed: Boolean = true
         if(supportFragmentManager.backStackEntryCount > 0){
             if(supportFragmentManager.getBackStackEntryAt(0).name == ERROR_STATE) {
-                if( mCachedRepos == null ){
-                    finish()
-                }
+                finish()
+                executeOnBackPressed = false
             }else {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                title = getString(R.string.main_activity_title)
                 invalidateOptionsMenu()
+                main_progress_bar.visibility = View.GONE
             }
         }
-        super.onBackPressed()
+        if(executeOnBackPressed) {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onFragmentFinishedLoading() {
+        main_progress_bar.visibility = View.GONE
     }
 
     private fun searchRepos(){
-        HtttpIntentService.startSearchRepos(this);
+        HttpIntentService.startSearchRepos(this)
         main_progress_bar.visibility = View.VISIBLE
     }
 
@@ -123,13 +128,25 @@ class MainActivity : AppCompatActivity(){
             val fragment = NoResultsFragment.newInstance()
             supportFragmentManager
                     .beginTransaction()
-                    .addToBackStack(ERROR_STATE)
                     .add(R.id.main_container, fragment)
                     .commit()
         }
-        mCachedRepos = repos
         main_progress_bar.visibility = View.GONE
     }
+
+    private fun onRepoItemClick(repo: Repo) {
+        val fragment = RepoDetailFragment.newInstance(repo)
+
+        supportFragmentManager.beginTransaction()
+                .add(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        toolbar.menu.removeItem(R.id.action_refresh)
+        main_progress_bar.visibility = View.VISIBLE
+    }
+
 
     fun onSearchReposError(error: String?) {
         val fragment = ErrorFragment.newInstance(error)
@@ -140,18 +157,6 @@ class MainActivity : AppCompatActivity(){
                 .commit()
 
         main_progress_bar.visibility = View.GONE
-    }
-
-    fun onRepoItemClick(repo: Repo) {
-        val fragment = RepoDetailFragment.newInstance(repo)
-
-        supportFragmentManager.beginTransaction()
-                .add(R.id.main_container, fragment)
-                .addToBackStack(null)
-                .commit()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        toolbar.menu.removeItem(R.id.action_refresh)
     }
 
 }

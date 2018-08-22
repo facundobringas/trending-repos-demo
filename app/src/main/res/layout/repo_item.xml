@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingVertical="@dimen/repo_item_vertical_padding"
-    android:background="@drawable/repo_item_background" >
+    android:background="@drawable/selector_repo_item" >
 
     <LinearLayout
         android:layout_height="wrap_content"

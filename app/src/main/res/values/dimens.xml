@@ -8,6 +8,10 @@
     <dimen name="repo_item_height">100dp</dimen>
     <dimen name="error_image_width">250dp</dimen>
     <dimen name="error_image_height">120dp</dimen>
-    <dimen name="repo_detail_text_size">18sp</dimen>
+    <dimen name="repo_detail_text_size">20sp</dimen>
     <dimen name="pd_readme">15dp</dimen>
+    <dimen name="ll_mg_bttm">15dp</dimen>
+    <dimen name="avatar_size">90dp</dimen>
+    <dimen name="fl_pd_tp">50dp</dimen>
+    <dimen name="centered_title">22sp</dimen>
 </resources>

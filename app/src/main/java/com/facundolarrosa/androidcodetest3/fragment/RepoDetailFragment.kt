@@ -12,10 +12,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.facundolarrosa.androidcodetest3.R
-import com.facundolarrosa.androidcodetest3.intentservice.HtttpIntentService
+import com.facundolarrosa.androidcodetest3.glide.GlideApp
+import com.facundolarrosa.androidcodetest3.intentservice.HttpIntentService
 import com.facundolarrosa.androidcodetest3.model.Repo
 import kotlinx.android.synthetic.main.fragment_repo_detail.*
-import ru.noties.markwon.Markwon
+//import ru.noties.markwon.Markwon
 
 private const val ARG_REPO = "repo"
 
@@ -28,6 +29,7 @@ private const val ARG_REPO = "repo"
 class RepoDetailFragment : Fragment() {
     private var mRepo: Repo? = null
     private lateinit var mBroadcastReceiver: BroadcastReceiver
+    private var mListener: OnFragmentFinishedLoadingListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +44,8 @@ class RepoDetailFragment : Fragment() {
             override fun onReceive(contxt: Context?, intent: Intent?) {
 
                 when (intent?.action) {
-                    HtttpIntentService.GET_README_SUCCESS -> onGetReadMeSuccess(intent.getStringExtra(HtttpIntentService.GET_README_RESULT)!!)
-                    HtttpIntentService.GET_README_ERROR -> onGetReadMeError()
+                    HttpIntentService.GET_README_SUCCESS -> onGetReadMeSuccess(intent.getStringExtra(HttpIntentService.GET_README_RESULT)!!)
+                    HttpIntentService.GET_README_ERROR -> onGetReadMeError()
                 }
             }
         }
@@ -54,14 +56,17 @@ class RepoDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = getString(R.string.repo_details)
         tv_name.text = mRepo?.name
         tv_detail.text = mRepo?.description
         tv_owner.text = mRepo?.owner?.login
         tv_language.text = mRepo?.language
         tv_stars.text = mRepo?.stargazersCount.toString()
         tv_forks.text = mRepo?.forks.toString()
-        tv_watchers.text = mRepo?.watchers.toString()
+
+        GlideApp.with(this)
+                .load(mRepo?.owner?.avatarUrl)
+                .placeholder(R.drawable.img_missing_avatar)
+                .into(iv_owner_avatar);
 
         getReadMe()
     }
@@ -70,7 +75,7 @@ class RepoDetailFragment : Fragment() {
         super.onStart()
 
         val intentFilter =  IntentFilter()
-        intentFilter.addAction(HtttpIntentService.GET_README_SUCCESS)
+        intentFilter.addAction(HttpIntentService.GET_README_SUCCESS)
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(mBroadcastReceiver,intentFilter)
     }
 
@@ -79,19 +84,32 @@ class RepoDetailFragment : Fragment() {
         LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(mBroadcastReceiver)
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnFragmentFinishedLoadingListener) {
+            mListener = context
+        } else {
+            throw RuntimeException(context.toString() + " must implement OnFragmentFinishedLoadingListener")
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mListener = null
+    }
+
     private fun getReadMe(){
-        HtttpIntentService.startGetReadMe(activity!!, mRepo?.owner?.login!!, mRepo?.name!!)
+        HttpIntentService.startGetReadMe(activity!!, mRepo?.owner?.login!!, mRepo?.name!!)
     }
 
     private fun onGetReadMeSuccess(readme: String){
-        Markwon.setMarkdown(tv_readme, readme);
-        //md_view.loadMarkdown(readme)
+        md_view.setMarkDownText(readme)
+        mListener?.onFragmentFinishedLoading()
     }
 
     private fun onGetReadMeError() {
-        tv_readme.text = getString(R.string.readme_error)
+        mListener?.onFragmentFinishedLoading()
     }
-
 
     companion object {
         /**
@@ -105,5 +123,9 @@ class RepoDetailFragment : Fragment() {
                         putParcelable(ARG_REPO, repo)
                     }
                 }
+    }
+
+    interface OnFragmentFinishedLoadingListener {
+        fun onFragmentFinishedLoading()
     }
 }

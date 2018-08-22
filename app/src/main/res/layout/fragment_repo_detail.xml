@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -8,14 +9,21 @@
     android:orientation="vertical"
     tools:context=".fragment.RepoDetailFragment">
 
+    <ImageView
+        android:id="@+id/iv_owner_avatar"
+        android:layout_height="@dimen/avatar_size"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_gravity="center_horizontal"/>
+
     <LinearLayout
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:orientation="horizontal"
         android:textSize="@dimen/repo_detail_text_size"
         android:textStyle="bold"
         android:paddingHorizontal="@dimen/repo_item_horizontal_padding"
-        android:layout_marginVertical="@dimen/repo_item_title_vertical_padding">
+        android:layout_marginVertical="@dimen/repo_item_title_vertical_padding"
+        android:layout_gravity="center_horizontal">
 
         <TextView
             android:id="@+id/tv_owner"
@@ -43,43 +51,43 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/repo_item_vertical_padding"
-        android:text="@string/default_no_description"/>
+        android:textAlignment="center"/>
 
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="@dimen/error_image_width"
         android:orientation="horizontal"
         android:weightSum="4"
-        android:layout_gravity="right">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/ll_mg_bttm">
 
         <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="right">
             <TextView
                 android:id="@+id/tv_language"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="right">
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_stars"
-                android:background="@android:color/transparent"
-                android:layout_gravity="right" />
+                android:background="@android:color/transparent" />
             <TextView
                 android:id="@+id/tv_stars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
                 android:layout_marginLeft="@dimen/repo_item_horizontal_padding"/>
         </LinearLayout>
 
@@ -87,60 +95,25 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="right">
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_forks"
-                android:background="@android:color/transparent"
-                android:layout_gravity="right"/>
+                android:background="@android:color/transparent"/>
             <TextView
                 android:id="@+id/tv_forks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
                 android:layout_marginLeft="@dimen/repo_item_horizontal_padding"/>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:orientation="horizontal"
-            android:layout_weight="1">
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_watchers"
-                android:background="@android:color/transparent"
-                android:layout_gravity="right"/>
-            <TextView
-                android:id="@+id/tv_watchers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginLeft="@dimen/repo_item_horizontal_padding"/>
-        </LinearLayout>
-
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_readme_label"
+    <com.mukesh.MarkdownView
+        android:id="@+id/md_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/readme"
-        android:layout_marginVertical="@dimen/repo_item_vertical_padding"/>
-
-    <TextView
-        android:id="@+id/tv_readme"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_readme"
-        android:padding="@dimen/pd_readme"/>
-
-
- <!--   <us.feras.mdv.MarkdownView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/md_view" />-->
+        />
 
 </LinearLayout>

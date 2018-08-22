@@ -26,7 +26,7 @@ private const val REPO_NAME = "REPO_NAME"
 
 private const val UNPROCESSABLE_ENTITY = 422
 
-class HtttpIntentService : IntentService("HtttpIntentService") {
+class HttpIntentService : IntentService("HttpIntentService") {
 
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
@@ -53,17 +53,17 @@ class HtttpIntentService : IntentService("HtttpIntentService") {
                                     response: Response<ApiResult<Repo>?>?) {
 
                 if(response?.isSuccessful!!){
-                    response?.body()?.let {
+                    response.body()?.let {
                         val repos: List<Repo> = it.items
                         onSearchReposSuccess(repos)
                     }?: run {
-                        onSeacrhReposError(this@HtttpIntentService.getString(R.string.empty_response, this@HtttpIntentService.getString(R.string.our_bad )))
+                        onSeacrhReposError(this@HttpIntentService.getString(R.string.empty_response, this@HttpIntentService.getString(R.string.our_bad )))
                     }
-                }else if (response?.code() == UNPROCESSABLE_ENTITY){
-                    val jObjError = JSONObject(response?.errorBody()?.string())
-                    onSeacrhReposError(this@HtttpIntentService.getString(R.string.unprocessable_entity, this@HtttpIntentService.getString(R.string.our_bad ), jObjError.getString("message")))
+                }else if (response.code() == UNPROCESSABLE_ENTITY){
+                    val jObjError = JSONObject(response.errorBody()?.string())
+                    onSeacrhReposError(this@HttpIntentService.getString(R.string.unprocessable_entity, this@HttpIntentService.getString(R.string.our_bad ), jObjError.getString("message")))
                 }else{
-                    onSeacrhReposError(this@HtttpIntentService.getString(R.string.http_error, this@HtttpIntentService.getString(R.string.our_bad ), response?.code()))
+                    onSeacrhReposError(this@HttpIntentService.getString(R.string.http_error, this@HttpIntentService.getString(R.string.our_bad ), response.code()))
                 }
 
             }
@@ -71,9 +71,9 @@ class HtttpIntentService : IntentService("HtttpIntentService") {
             override fun onFailure(call: Call<ApiResult<Repo>?>?,
                                    t: Throwable?) {
                 when(t) {
-                    is SocketTimeoutException -> onSeacrhReposError(this@HtttpIntentService.getString(R.string.socket_timeout))
-                    is UnknownHostException -> onSeacrhReposError(this@HtttpIntentService.getString(R.string.unknown_host))
-                    else -> onSeacrhReposError(this@HtttpIntentService.getString(R.string.conversion_error, this@HtttpIntentService.getString(R.string.our_bad ), t?.message))
+                    is SocketTimeoutException -> onSeacrhReposError(this@HttpIntentService.getString(R.string.socket_timeout))
+                    is UnknownHostException -> onSeacrhReposError(this@HttpIntentService.getString(R.string.unknown_host))
+                    else -> onSeacrhReposError(this@HttpIntentService.getString(R.string.conversion_error, this@HttpIntentService.getString(R.string.our_bad ), t?.message))
                 }
             }
         })
@@ -103,8 +103,8 @@ class HtttpIntentService : IntentService("HtttpIntentService") {
                                     response: Response<ResponseBody?>?) {
 
                 if(response?.isSuccessful!!){
-                    response?.body()?.let {
-                        val readMe: String? = response?.body()?.string()
+                    response.body()?.let {
+                        val readMe: String? = response.body()?.string()
                         onGetReadMeSuccess(readMe!!)
                     }?: run {
                         onGetReadmeError()
@@ -143,7 +143,7 @@ class HtttpIntentService : IntentService("HtttpIntentService") {
 
         @JvmStatic
         fun startSearchRepos(context: Context) {
-            val intent = Intent(context, HtttpIntentService::class.java).apply {
+            val intent = Intent(context, HttpIntentService::class.java).apply {
                 action = ACTION_SEARCH_REPOS
             }
             context.startService(intent)
@@ -151,7 +151,7 @@ class HtttpIntentService : IntentService("HtttpIntentService") {
 
         @JvmStatic
         fun startGetReadMe(context: Context, repoOwner: String, repoName: String) {
-            val intent = Intent(context, HtttpIntentService::class.java).apply {
+            val intent = Intent(context, HttpIntentService::class.java).apply {
                 action = ACTION_GET_README
                 putExtra(REPO_OWNER, repoOwner)
                 putExtra(REPO_NAME, repoName)

@@ -24,7 +24,7 @@
         </activity>
 
         <service
-            android:name=".intentservice.HtttpIntentService"
+            android:name=".intentservice.HttpIntentService"
             android:exported="false"></service>
     </application>
 
