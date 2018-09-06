@@ -6,6 +6,6 @@ Although I have 8+ years of Android development experience it has been practical
 
 ### About the Demo
 
-Thes mobile application is a very simple POC that uses Retrofit 2 for consuming Github API services. It retrieves and shows a list of the most starred Kotlin projects over the past few years with the possibility to access a detailed view of the project a take a look ate the each repos README.md.
+This mobile application is a very simple POC that uses Retrofit 2 for consuming Github API services. It retrieves and shows a list of the most starred Kotlin projects over the past few years with the possibility to access a detailed view of the project and take a look at the each repos README.md.
 
 Happy Reviewing!
