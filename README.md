@@ -2,7 +2,7 @@
 
 ### Notes
 
-Although I have 8+ years of Android development experience it has been practically Java all the time. My Kotlin experienced is resumed in a few lines of contribution when I was working as a front-end developer not responsible for de Android app but in charge of a Web app. I developed this project as personal challenge to learn more about Kotlin
+Although I have 8+ years of Android development experience it has been Java most of the time. My Kotlin experienced is resumed in a few lines of contribution when I was working as a front-end developer not responsible for de Android app but in charge of a Web app. I developed this project as personal challenge to learn more about Kotlin
 
 ### About the Demo
 
